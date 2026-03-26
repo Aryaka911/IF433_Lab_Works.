@@ -2,7 +2,12 @@ package oop_000000996731_AryakaAlif_week2
 
 import java.util.Scanner
 
-class Student(val name: String, val nim: String, val major: String) {
+class Student(
+    val name: String,
+    val nim: String,
+    var major: String,
+    var gpa: Double = 0.0 // Default Argument
+) {
 
     init {
         // Validasi di dalam class
@@ -14,31 +19,11 @@ class Student(val name: String, val nim: String, val major: String) {
         }
     }
 
-    fun displayData() {
-        println("Nama   : $name")
-        println("NIM    : $nim")
-        println("Jurusan: $major")
+    // Secondary Constructor (tetap jalan, otomatis pakai gpa = 0.0)
+    constructor(name: String, nim: String) : this(name, nim, "Non-Matriculated") {
+        println("LOG: Menggunakan constructor jalur umum (Tanpa Jurusan).")
     }
-}
 
-fun main() {
-    val scanner = Scanner(System.`in`)
 
-    print("Masukkan Nama: ")
-    val name = scanner.nextLine()
-
-    print("Masukkan NIM: ")
-    val nim = scanner.nextLine()
-
-    // Validasi di sisi pemanggil (Main)
-    if (nim.length != 5) {
-        println("ERROR: Pendaftaran dibatalkan. NIM harus 5 karakter!")
-    } else {
-        print("Masukkan Jurusan: ")
-        val major = scanner.nextLine()
-
-        val student = Student(name, nim, major)
-        println("\nData Mahasiswa:")
-        student.displayData()
     }
 }
