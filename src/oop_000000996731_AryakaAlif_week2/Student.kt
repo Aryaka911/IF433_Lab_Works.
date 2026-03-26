@@ -24,6 +24,39 @@ class Student(
         println("LOG: Menggunakan constructor jalur umum (Tanpa Jurusan).")
     }
 
+    fun displayData() {
+        println("Nama   : $name")
+        println("NIM    : $nim")
+        println("Jurusan: $major")
+        println("IPK    : $gpa")
+    }
+}
 
+fun main() {
+    val scanner = Scanner(System.`in`)
+
+    print("Masukkan Nama: ")
+    val name = scanner.nextLine()
+
+    print("Masukkan NIM: ")
+    val nim = scanner.nextLine()
+
+    if (nim.length != 5) {
+        println("ERROR: Pendaftaran dibatalkan. NIM harus 5 karakter!")
+    } else {
+        print("Masukkan Jurusan: ")
+        val major = scanner.nextLine()
+
+        print("Masukkan IPK (kosongkan jika tidak ada): ")
+        val inputGpa = scanner.nextLine()
+
+        val student = if (inputGpa.isEmpty()) {
+            Student(name, nim, major) // pakai default gpa = 0.0
+        } else {
+            Student(name, nim, major, inputGpa.toDouble())
+        }
+
+        println("\nData Mahasiswa:")
+        student.displayData()
     }
 }
