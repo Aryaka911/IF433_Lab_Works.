@@ -16,3 +16,6 @@ interface Recordable {
         println("Perekaman dihentikan dan disimpan ke Cloud.")
     }
 }
+}
+
+
