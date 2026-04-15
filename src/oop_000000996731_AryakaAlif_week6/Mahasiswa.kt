@@ -4,4 +4,6 @@ interface Mahasiswa {
     val nama: String
 
     fun belajar()
+    fun serang()
+    fun mati()
 }
