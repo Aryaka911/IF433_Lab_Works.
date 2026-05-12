@@ -16,10 +16,12 @@ fun main() {
         try {
             parser.parseProduct(raw)?.let { product ->
                 println("Parsed Product: $product")
+                println("\nParsed Product: $product")
                 parser.checkout(product)
             }
         } catch (e: IllegalArgumentException) {
             println("Error parsing data: ${e.message}")
+            println("\nError parsing data: ${e.message}")
         }
     }
 }
