@@ -11,3 +11,12 @@ class WalletRepository<T> {
         return items
     }
 }
+
+fun searchByName(name: String): List<T> {
+    return items.filter {
+        when (it) {
+            is Coin -> it.name.contains(name, ignoreCase = true)
+            else -> false
+        }
+    }
+}
