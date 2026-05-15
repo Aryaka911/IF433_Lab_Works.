@@ -31,6 +31,7 @@ fun dispenseKibble(
 fun main() {
 
     var currentKibbleStock = 50
+    var currentKibbleStock = 40
 
     try {
 
@@ -70,4 +71,3 @@ fun main() {
         println("Peringatan ke Pemilik: ${error.message}")
         println("(Opsional: Berikan chicken jerky secara manual)")
     }
-}
