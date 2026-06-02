@@ -2,84 +2,103 @@ package oop_00000096731_AryakaAlif_week14
 
 import java.io.File
 
-class BadOrderProcessor {
-    interface OrderRepository {
-        fun saveOrder(
-            itemName: String,
-            finalPrice: Double,
-            customerType: String
-        )
+interface OrderRepository {
+    fun saveOrder(
+        itemName: String,
+        finalPrice: Double,
+        customerType: String
+    )
+}
+
+class CsvOrderRepository : OrderRepository {
+
+    private val file = File("orders.csv")
+
+    override fun saveOrder(
+        itemName: String,
+        finalPrice: Double,
+        customerType: String
+    ) {
+
+        file.bufferedWriter().use { writer ->
+            writer.append("$itemName,$finalPrice,$customerType\n")
+        }
+        file.appendText("$itemName,$finalPrice,$customerType\n")
     }
+}
 
-    class CsvOrderRepository : OrderRepository {
+@@ -36,6 +34,24 @@
+}
+}
 
-        private val file = File("orders.csv")
+interface PricingStrategy {
+    fun calculate(price: Double): Double
+}
 
-        fun processOrder(itemName: String, basePrice: Double, customerType: String) {
-            override fun saveOrder(
-                itemName: String,
-                finalPrice: Double,
-                customerType: String
-            ) {
+class RegularPricing : PricingStrategy {
 
-                file.bufferedWriter().use { writer ->
-                    writer.append("$itemName,$finalPrice,$customerType\n")
-                }
-            }
-        }
+    override fun calculate(price: Double): Double {
+        return price
+    }
+}
 
-        interface NotificationService {
-            fun sendNotification(itemName: String)
-        }
+class VipPricing : PricingStrategy {
 
-        class EmailNotifier : NotificationService {
+    override fun calculate(price: Double): Double {
+        return price * 0.90
+    }
+}
 
-            override fun sendNotification(itemName: String) {
-                println("Email terkirim: Pesanan $itemName Anda telah dikonfirmasi!")
-            }
-        }
+class SafeOrderProcessor(
+    private val repo: OrderRepository,
+    private val notifier: NotificationService
+    @@ -44,18 +60,19 @@
+fun processOrder(
+    itemName: String,
+    basePrice: Double,
+    customerType: String
+    customerType: String,
+    pricingStrategy: PricingStrategy
+) {
 
-        class SafeOrderProcessor(
-            private val repo: OrderRepository,
-            private val notifier: NotificationService
-        ) {
+    val finalPrice = when (customerType) {
+        "REGULAR" -> basePrice
+        "VIP" -> basePrice * 0.90
+        else -> basePrice
+    }
+    val finalPrice = pricingStrategy.calculate(basePrice)
 
-            fun processOrder(
-                itemName: String,
-                basePrice: Double,
-                customerType: String
-            ) {
+    println("Memproses pesanan $itemName seharga $finalPrice")
 
-                val finalPrice = when (customerType) {
-                    "REGULAR" -> basePrice
-                    "VIP" -> basePrice * 0.90
-                    else -> basePrice
-                }
+    repo.saveOrder(itemName, finalPrice, customerType)
+    repo.saveOrder(
+        itemName,
+        finalPrice,
+        customerType
+    )
 
-                println("Memproses pesanan $itemName seharga $finalPrice")
-                file.appendText("$itemName,$finalPrice,$customerType\n")
-                println("Email terkirim: Pesanan $itemName Anda telah dikonfirmasi!")
+    notifier.sendNotification(itemName)
+}
+@@ -72,9 +89,21 @@
+notifier
+)
 
-                repo.saveOrder(itemName, finalPrice, customerType)
+val vipPricing = VipPricing()
 
-                notifier.sendNotification(itemName)
-            }
-        }
+val regularPricing = RegularPricing()
 
-        fun main() {
+processor.processOrder(
+"Laptop",
+10000000.0,
+"VIP"
+"VIP",
+vipPricing
+)
 
-            val repository = CsvOrderRepository()
-
-            val notifier = EmailNotifier()
-
-            val processor = SafeOrderProcessor(
-                repository,
-                notifier
-            )
-
-            processor.processOrder(
-                "Laptop",
-                10000000.0,
-                "VIP"
-            )
-        }
+processor.processOrder(
+"Mouse",
+500000.0,
+"REGULAR",
+regularPricing
+)
+}
